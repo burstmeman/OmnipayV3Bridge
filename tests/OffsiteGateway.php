@@ -16,7 +16,7 @@ class OffsiteGateway extends AbstractGateway
 
     public function completePurchase()
     {
-        return $this->returnOnCompletePurchase;;
+        return $this->returnOnCompletePurchase;
     }
 
     public function getName() {}

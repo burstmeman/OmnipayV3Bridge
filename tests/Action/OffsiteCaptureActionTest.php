@@ -16,6 +16,7 @@ use Payum\OmnipayV3Bridge\Action\BaseApiAwareAction;
 use Payum\OmnipayV3Bridge\Action\OffsiteCaptureAction;
 use Payum\OmnipayV3Bridge\Tests\CreditCardGateway;
 use Payum\OmnipayV3Bridge\Tests\OffsiteGateway;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class OffsiteCaptureActionTest extends GenericActionTest
 {
@@ -28,7 +29,7 @@ class OffsiteCaptureActionTest extends GenericActionTest
      */
     protected $action;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->action = new $this->actionClass();
         $this->action->setApi(new OffsiteGateway());
@@ -37,39 +38,39 @@ class OffsiteCaptureActionTest extends GenericActionTest
     /**
      * @test
      */
-    public function shouldBeSubClassOfBaseApiAwareAction()
+    public function shouldBeSubClassOfBaseApiAwareAction(): void
     {
         $rc = new \ReflectionClass(OffsiteCaptureAction::class);
-        
-        $this->assertTrue($rc->isSubclassOf(BaseApiAwareAction::class));
+
+        self::assertTrue($rc->isSubclassOf(BaseApiAwareAction::class));
     }
 
     /**
      * @test
      */
-    public function shouldImplementInterfaceGatewayAwareAction()
+    public function shouldImplementInterfaceGatewayAwareAction(): void
     {
         $rc = new \ReflectionClass(OffsiteCaptureAction::class);
 
-        $this->assertTrue($rc->isSubclassOf(GatewayAwareInterface::class));
+        self::assertTrue($rc->isSubclassOf(GatewayAwareInterface::class));
     }
 
     /**
      * @test
      */
-    public function shouldImplementInterfaceGenericTokenFactoryAwareInterface()
+    public function shouldImplementInterfaceGenericTokenFactoryAwareInterface(): void
     {
         $rc = new \ReflectionClass(OffsiteCaptureAction::class);
 
-        $this->assertTrue($rc->implementsInterface(GenericTokenFactoryAwareInterface::class));
+        self::assertTrue($rc->implementsInterface(GenericTokenFactoryAwareInterface::class));
     }
 
-    public function shouldNotSupportIfCreditCardOmnipayGatewaySetAsApi()
+    public function shouldNotSupportIfCreditCardOmnipayGatewaySetAsApi(): void
     {
         $this->action->setApi(new CreditCardGateway());
 
-        $this->assertFalse($this->action->supports(new Capture([])));
-        $this->assertFalse($this->action->supports(new Capture(new \ArrayObject())));
+        self::assertFalse($this->action->supports(new Capture([])));
+        self::assertFalse($this->action->supports(new Capture(new \ArrayObject())));
     }
 
     /**
@@ -78,13 +79,13 @@ class OffsiteCaptureActionTest extends GenericActionTest
      * @expectedException \LogicException
      * @expectedExceptionMessage The bridge supports only responses which extends AbstractResponse. Their ResponseInterface is useless.
      */
-    public function throwsIfPurchaseMethodReturnResponseNotInstanceOfAbstractResponse()
+    public function throwsIfPurchaseMethodReturnResponseNotInstanceOfAbstractResponse(): void
     {
-        $requestMock = $this->getMock(OmnipayRequestInterface::class);
+        $requestMock = $this->createMock(OmnipayRequestInterface::class);
         $requestMock
             ->expects($this->once())
             ->method('send')
-            ->will($this->returnValue($this->getMock(OmnipayResponseInterface::class)))
+            ->willReturn($this->createMock(OmnipayResponseInterface::class))
         ;
 
         $gateway = new OffsiteGateway();
@@ -100,30 +101,30 @@ class OffsiteCaptureActionTest extends GenericActionTest
     /**
      * @test
      */
-    public function shouldCallGatewayPurchaseMethodWithExpectedArguments()
+    public function shouldCallGatewayPurchaseMethodWithExpectedArguments(): void
     {
-        $details = array(
+        $details = [
             'foo' => 'fooVal',
             'bar' => 'barVal',
-            'card' => array('cvv' => 123),
+            'card' => ['cvv' => 123],
             'clientIp' => '',
-        );
+        ];
 
-        $responseMock = $this->getMock(OmnipayAbstractResponse::class, [], [], '', false);
+        $responseMock = $this->createMock(OmnipayAbstractResponse::class, [], [], '', false);
         $responseMock
             ->expects($this->once())
             ->method('getData')
             ->willReturn([])
         ;
 
-        $requestMock = $this->getMock(OmnipayRequestInterface::class);
+        $requestMock = $this->createMock(OmnipayRequestInterface::class);
         $requestMock
             ->expects($this->once())
             ->method('send')
-            ->will($this->returnValue($responseMock))
+            ->willReturn($responseMock)
         ;
 
-        $omnipayGateway = $this->getMock(OffsiteGateway::class);
+        $omnipayGateway = $this->createMock(OffsiteGateway::class);
         $omnipayGateway
             ->expects($this->once())
             ->method('purchase')
@@ -145,31 +146,31 @@ class OffsiteCaptureActionTest extends GenericActionTest
     /**
      * @test
      */
-    public function shouldCallGatewayCompletePurchaseMethodWithExpectedArguments()
+    public function shouldCallGatewayCompletePurchaseMethodWithExpectedArguments(): void
     {
-        $details = array(
+        $details = [
             '_completeCaptureRequired' => true,
             'foo' => 'fooVal',
             'bar' => 'barVal',
-            'card' => array('cvv' => 123),
+            'card' => ['cvv' => 123],
             'clientIp' => '',
-        );
+        ];
 
-        $responseMock = $this->getMock(OmnipayAbstractResponse::class, [], [], '', false);
+        $responseMock = $this->createMock(OmnipayAbstractResponse::class, [], [], '', false);
         $responseMock
             ->expects($this->once())
             ->method('getData')
             ->willReturn([])
         ;
 
-        $requestMock = $this->getMock(OmnipayRequestInterface::class);
+        $requestMock = $this->createMock(OmnipayRequestInterface::class);
         $requestMock
             ->expects($this->once())
             ->method('send')
-            ->will($this->returnValue($responseMock))
+            ->willReturn($responseMock)
         ;
 
-        $omnipayGateway = $this->getMock(OffsiteGateway::class);
+        $omnipayGateway = $this->createMock(OffsiteGateway::class);
         $omnipayGateway
             ->expects($this->once())
             ->method('completePurchase')
@@ -191,32 +192,32 @@ class OffsiteCaptureActionTest extends GenericActionTest
     /**
      * @test
      */
-    public function shouldNotCallGatewayCompletePurchaseMethodIfAlreadyCompleted()
+    public function shouldNotCallGatewayCompletePurchaseMethodIfAlreadyCompleted(): void
     {
-        $details = array(
+        $details = [
             '_completeCaptureRequired' => true,
             '_captureCompleted' => true,
             'foo' => 'fooVal',
             'bar' => 'barVal',
-            'card' => array('cvv' => 123),
+            'card' => ['cvv' => 123],
             'clientIp' => '',
-        );
+        ];
 
-        $responseMock = $this->getMock(OmnipayAbstractResponse::class, [], [], '', false);
+        $responseMock = $this->createMock(OmnipayAbstractResponse::class, [], [], '', false);
         $responseMock
             ->expects($this->never())
             ->method('getData')
             ->willReturn([])
         ;
 
-        $requestMock = $this->getMock(OmnipayRequestInterface::class);
+        $requestMock = $this->createMock(OmnipayRequestInterface::class);
         $requestMock
             ->expects($this->never())
             ->method('send')
-            ->will($this->returnValue($responseMock))
+            ->willReturn($responseMock)
         ;
 
-        $omnipayGateway = $this->getMock(OffsiteGateway::class);
+        $omnipayGateway = $this->createMock(OffsiteGateway::class);
         $omnipayGateway
             ->expects($this->never())
             ->method('completePurchase')
@@ -238,27 +239,27 @@ class OffsiteCaptureActionTest extends GenericActionTest
     /**
      * @test
      */
-    public function shouldDoNothingIfStatusAlreadySet()
+    public function shouldDoNothingIfStatusAlreadySet(): void
     {
-        $details = array(
+        $details = [
             '_status' => 'foo',
-        );
+        ];
 
-        $responseMock = $this->getMock(OmnipayAbstractResponse::class, [], [], '', false);
+        $responseMock = $this->createMock(OmnipayAbstractResponse::class, [], [], '', false);
         $responseMock
             ->expects($this->never())
             ->method('getData')
             ->willReturn([])
         ;
 
-        $requestMock = $this->getMock(OmnipayRequestInterface::class);
+        $requestMock = $this->createMock(OmnipayRequestInterface::class);
         $requestMock
             ->expects($this->never())
             ->method('send')
-            ->will($this->returnValue($responseMock))
+            ->willReturn($responseMock)
         ;
 
-        $omnipayGateway = $this->getMock(OffsiteGateway::class);
+        $omnipayGateway = $this->createMock(OffsiteGateway::class);
         $omnipayGateway
             ->expects($this->never())
             ->method('completePurchase')
@@ -280,30 +281,30 @@ class OffsiteCaptureActionTest extends GenericActionTest
     /**
      * @test
      */
-    public function shouldSetCaptureTokenTargetUrlAsReturnUrl()
+    public function shouldSetCaptureTokenTargetUrlAsReturnUrl(): void
     {
         $details = new \ArrayObject([
             'foo' => 'fooVal',
             'bar' => 'barVal',
-            'card' => array('cvv' => 123),
+            'card' => ['cvv' => 123],
             'clientIp' => '',
         ]);
 
-        $responseMock = $this->getMock(OmnipayAbstractResponse::class, [], [], '', false);
+        $responseMock = $this->createMock(OmnipayAbstractResponse::class, [], [], '', false);
         $responseMock
             ->expects($this->any())
             ->method('getData')
             ->willReturn([])
         ;
 
-        $requestMock = $this->getMock(OmnipayRequestInterface::class);
+        $requestMock = $this->createMock(OmnipayRequestInterface::class);
         $requestMock
             ->expects($this->any())
             ->method('send')
-            ->will($this->returnValue($responseMock))
+            ->willReturn($responseMock)
         ;
 
-        $omnipayGateway = $this->getMock(OffsiteGateway::class);
+        $omnipayGateway = $this->createMock(OffsiteGateway::class);
         $omnipayGateway
             ->expects($this->once())
             ->method('purchase')
@@ -323,37 +324,37 @@ class OffsiteCaptureActionTest extends GenericActionTest
         $action->execute($request);
 
         $details = (array) $details;
-        $this->assertArrayHasKey('returnUrl', $details);
-        $this->assertEquals('theCaptureUrl', $details['returnUrl']);
+        self::assertArrayHasKey('returnUrl', $details);
+        self::assertEquals('theCaptureUrl', $details['returnUrl']);
     }
 
     /**
      * @test
      */
-    public function shouldSetCaptureTokenTargetUrlAsCancelUrl()
+    public function shouldSetCaptureTokenTargetUrlAsCancelUrl(): void
     {
         $details = new \ArrayObject([
             'foo' => 'fooVal',
             'bar' => 'barVal',
-            'card' => array('cvv' => 123),
+            'card' => ['cvv' => 123],
             'clientIp' => '',
         ]);
 
-        $responseMock = $this->getMock(OmnipayAbstractResponse::class, [], [], '', false);
+        $responseMock = $this->createMock(OmnipayAbstractResponse::class, [], [], '', false);
         $responseMock
             ->expects($this->any())
             ->method('getData')
             ->willReturn([])
         ;
 
-        $requestMock = $this->getMock(OmnipayRequestInterface::class);
+        $requestMock = $this->createMock(OmnipayRequestInterface::class);
         $requestMock
             ->expects($this->any())
             ->method('send')
-            ->will($this->returnValue($responseMock))
+            ->willReturn($responseMock)
         ;
 
-        $omnipayGateway = $this->getMock(OffsiteGateway::class);
+        $omnipayGateway = $this->createMock(OffsiteGateway::class);
         $omnipayGateway
             ->expects($this->once())
             ->method('purchase')
@@ -373,37 +374,37 @@ class OffsiteCaptureActionTest extends GenericActionTest
         $action->execute($request);
 
         $details = (array) $details;
-        $this->assertArrayHasKey('cancelUrl', $details);
-        $this->assertEquals('theCaptureUrl', $details['cancelUrl']);
+        self::assertArrayHasKey('cancelUrl', $details);
+        self::assertEquals('theCaptureUrl', $details['cancelUrl']);
     }
 
     /**
      * @test
      */
-    public function shouldSetNotifyUrlIfTokenFactoryAndCaptureTokenPresent()
+    public function shouldSetNotifyUrlIfTokenFactoryAndCaptureTokenPresent(): void
     {
         $details = new \ArrayObject([
             'foo' => 'fooVal',
             'bar' => 'barVal',
-            'card' => array('cvv' => 123),
+            'card' => ['cvv' => 123],
             'clientIp' => '',
         ]);
 
-        $responseMock = $this->getMock(OmnipayAbstractResponse::class, [], [], '', false);
+        $responseMock = $this->createMock(OmnipayAbstractResponse::class, [], [], '', false);
         $responseMock
             ->expects($this->any())
             ->method('getData')
             ->willReturn([])
         ;
 
-        $requestMock = $this->getMock(OmnipayRequestInterface::class);
+        $requestMock = $this->createMock(OmnipayRequestInterface::class);
         $requestMock
             ->expects($this->any())
             ->method('send')
-            ->will($this->returnValue($responseMock))
+            ->willReturn($responseMock)
         ;
 
-        $omnipayGateway = $this->getMock(OffsiteGateway::class);
+        $omnipayGateway = $this->createMock(OffsiteGateway::class);
         $omnipayGateway
             ->expects($this->once())
             ->method('purchase')
@@ -418,7 +419,7 @@ class OffsiteCaptureActionTest extends GenericActionTest
         $notifyToken = new Token();
         $notifyToken->setTargetUrl('theNotifyUrl');
 
-        $tokenFactoryMock = $this->getMock(GenericTokenFactoryInterface::class);
+        $tokenFactoryMock = $this->createMock(GenericTokenFactoryInterface::class);
         $tokenFactoryMock
             ->expects($this->once())
             ->method('createNotifyToken')
@@ -438,21 +439,21 @@ class OffsiteCaptureActionTest extends GenericActionTest
         $action->execute($request);
 
         $details = (array) $details;
-        $this->assertArrayHasKey('notifyUrl', $details);
-        $this->assertEquals('theNotifyUrl', $details['notifyUrl']);
+        self::assertArrayHasKey('notifyUrl', $details);
+        self::assertEquals('theNotifyUrl', $details['notifyUrl']);
     }
 
     /**
      * @test
      */
-    public function shouldMergeResponseArrayDataWithDetails()
+    public function shouldMergeResponseArrayDataWithDetails(): void
     {
         $details = new \ArrayObject([
-            'card' => array('cvv' => 123),
+            'card' => ['cvv' => 123],
             'clientIp' => '',
         ]);
 
-        $responseMock = $this->getMock(OmnipayAbstractResponse::class, [], [], '', false);
+        $responseMock = $this->createMock(OmnipayAbstractResponse::class, [], [], '', false);
         $responseMock
             ->expects($this->any())
             ->method('getData')
@@ -461,14 +462,14 @@ class OffsiteCaptureActionTest extends GenericActionTest
             ])
         ;
 
-        $requestMock = $this->getMock(OmnipayRequestInterface::class);
+        $requestMock = $this->createMock(OmnipayRequestInterface::class);
         $requestMock
             ->expects($this->any())
             ->method('send')
-            ->will($this->returnValue($responseMock))
+            ->willReturn($responseMock)
         ;
 
-        $omnipayGateway = $this->getMock(OffsiteGateway::class);
+        $omnipayGateway = $this->createMock(OffsiteGateway::class);
         $omnipayGateway
             ->expects($this->once())
             ->method('purchase')
@@ -483,7 +484,7 @@ class OffsiteCaptureActionTest extends GenericActionTest
         $notifyToken = new Token();
         $notifyToken->setTargetUrl('theNotifyUrl');
 
-        $tokenFactoryMock = $this->getMock(GenericTokenFactoryInterface::class);
+        $tokenFactoryMock = $this->createMock(GenericTokenFactoryInterface::class);
         $tokenFactoryMock
             ->expects($this->once())
             ->method('createNotifyToken')
@@ -502,35 +503,35 @@ class OffsiteCaptureActionTest extends GenericActionTest
         $action->execute($request);
 
         $details = (array) $details;
-        $this->assertArrayHasKey('foo', $details);
-        $this->assertEquals('fooVal', $details['foo']);
+        self::assertArrayHasKey('foo', $details);
+        self::assertEquals('fooVal', $details['foo']);
     }
 
     /**
      * @test
      */
-    public function shouldSetResponseStringDataToDetails()
+    public function shouldSetResponseStringDataToDetails(): void
     {
         $details = new \ArrayObject([
-            'card' => array('cvv' => 123),
+            'card' => ['cvv' => 123],
             'clientIp' => '',
         ]);
 
-        $responseMock = $this->getMock(OmnipayAbstractResponse::class, [], [], '', false);
+        $responseMock = $this->createMock(OmnipayAbstractResponse::class, [], [], '', false);
         $responseMock
             ->expects($this->any())
             ->method('getData')
             ->willReturn('someData')
         ;
 
-        $requestMock = $this->getMock(OmnipayRequestInterface::class);
+        $requestMock = $this->createMock(OmnipayRequestInterface::class);
         $requestMock
             ->expects($this->any())
             ->method('send')
-            ->will($this->returnValue($responseMock))
+            ->willReturn($responseMock)
         ;
 
-        $omnipayGateway = $this->getMock(OffsiteGateway::class);
+        $omnipayGateway = $this->createMock(OffsiteGateway::class);
         $omnipayGateway
             ->expects($this->once())
             ->method('purchase')
@@ -545,7 +546,7 @@ class OffsiteCaptureActionTest extends GenericActionTest
         $notifyToken = new Token();
         $notifyToken->setTargetUrl('theNotifyUrl');
 
-        $tokenFactoryMock = $this->getMock(GenericTokenFactoryInterface::class);
+        $tokenFactoryMock = $this->createMock(GenericTokenFactoryInterface::class);
         $tokenFactoryMock
             ->expects($this->once())
             ->method('createNotifyToken')
@@ -564,15 +565,23 @@ class OffsiteCaptureActionTest extends GenericActionTest
         $action->execute($request);
 
         $details = (array) $details;
-        $this->assertArrayHasKey('_data', $details);
-        $this->assertEquals('someData', $details['_data']);
+        self::assertArrayHasKey('_data', $details);
+        self::assertEquals('someData', $details['_data']);
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|GatewayInterface
+     * @test
+     */
+    public function couldBeConstructedWithoutAnyArguments(): void
+    {
+        self::assertNotNull(new $this->actionClass());
+    }
+
+    /**
+     * @return MockObject|GatewayInterface
      */
     protected function createGatewayMock()
     {
-        return $this->getMock(GatewayInterface::class);
+        return $this->createMock(GatewayInterface::class);
     }
 }

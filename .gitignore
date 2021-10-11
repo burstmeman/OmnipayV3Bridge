@@ -2,3 +2,6 @@ composer.phar
 composer.lock
 vendor
 bin
+.idea
+phpunit.xml
+.phpunit.result.cache

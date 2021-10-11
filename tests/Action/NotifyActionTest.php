@@ -20,7 +20,7 @@ class NotifyActionTest extends GenericActionTest
 
     protected $requestClass = Notify::class;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->action = new $this->actionClass();
         $this->action->setApi(new OffsiteGateway());
@@ -29,17 +29,17 @@ class NotifyActionTest extends GenericActionTest
     /**
      * @test
      */
-    public function shouldSetStatusCapturedWhenSuccessful()
+    public function shouldSetStatusCapturedWhenSuccessful(): void
     {
         $model = new \ArrayObject([]);
 
-        $responseMock = $this->getMock(OmnipayResponseInterface::class);
+        $responseMock = $this->createMock(OmnipayResponseInterface::class);
         $responseMock
             ->method('isSuccessful')
             ->willReturn(true)
         ;
 
-        $requestMock = $this->getMock(OmnipayRequestInterface::class);
+        $requestMock = $this->createMock(OmnipayRequestInterface::class);
         $requestMock
             ->expects($this->once())
             ->method('send')
@@ -55,28 +55,28 @@ class NotifyActionTest extends GenericActionTest
         try {
             $action->execute(new Notify($model));
         } catch (HttpResponse $e) {
-            $this->assertEquals(200, $e->getStatusCode());
+            self::assertEquals(200, $e->getStatusCode());
         }
 
         $details = iterator_to_array($model);
 
-        $this->assertEquals('captured', $details['_status']);
+        self::assertEquals('captured', $details['_status']);
     }
 
     /**
      * @test
      */
-    public function shouldSetStatusFailedWhenNotSuccessful()
+    public function shouldSetStatusFailedWhenNotSuccessful(): void
     {
         $model = new \ArrayObject([]);
 
-        $responseMock = $this->getMock(OmnipayResponseInterface::class);
+        $responseMock = $this->createMock(OmnipayResponseInterface::class);
         $responseMock
             ->method('isSuccessful')
             ->willReturn(false)
         ;
 
-        $requestMock = $this->getMock(OmnipayRequestInterface::class);
+        $requestMock = $this->createMock(OmnipayRequestInterface::class);
         $requestMock
             ->expects($this->once())
             ->method('send')
@@ -92,11 +92,19 @@ class NotifyActionTest extends GenericActionTest
         try {
             $action->execute(new Notify($model));
         } catch (HttpResponse $e) {
-            $this->assertEquals(200, $e->getStatusCode());
+            self::assertEquals(200, $e->getStatusCode());
         }
 
         $details = iterator_to_array($model);
 
-        $this->assertEquals('failed', $details['_status']);
+        self::assertEquals('failed', $details['_status']);
+    }
+
+    /**
+     * @test
+     */
+    public function couldBeConstructedWithoutAnyArguments(): void
+    {
+        self::assertNotNull(new $this->actionClass());
     }
 }

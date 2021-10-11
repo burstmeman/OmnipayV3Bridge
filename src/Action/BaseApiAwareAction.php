@@ -12,17 +12,17 @@ abstract class BaseApiAwareAction implements ActionInterface, ApiAwareInterface
     /**
      * @var GatewayInterface
      */
-    protected $omnipayGateway;
+    protected GatewayInterface $omnipayGateway;
 
     /**
      * {@inheritDoc}
      */
-    public function setApi($api)
+    public function setApi($api): void
     {
-        if (false == $api instanceof GatewayInterface) {
+        if (false === $api instanceof GatewayInterface) {
             throw new UnsupportedApiException('Not supported.');
         }
-        
+
         $this->omnipayGateway = $api;
     }
 }

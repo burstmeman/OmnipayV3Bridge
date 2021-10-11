@@ -2,6 +2,7 @@
 namespace Payum\OmnipayV3Bridge\Tests;
 
 use Omnipay\Common\AbstractGateway;
+use Omnipay\Common\Message\RequestInterface;
 
 class CreditCardGateway extends AbstractGateway
 {
