@@ -1,9 +1,9 @@
 {
-    "name": "payum/omnipay-v3-bridge",
+    "name": "burstmeman/omnipay-v3-bridge",
     "type": "library",
     "description": "This bridge allows you to use omnipay gateways but in payum like way.",
     "keywords": ["payment", "omnipay"],
-    "homepage": "https://payum.forma-pro.com/",
+    "homepage": "https://github.com/burstmeman/OmnipayV3Bridge",
     "license": "MIT",
     "authors": [
         {
@@ -19,6 +19,9 @@
             "homepage": "https://github.com/Payum/OmnipayBridge/contributors"
         }
     ],
+    "conflict": {
+        "payum/omnipay-v3-bridge": "*"
+    },
     "require": {
         "php": "^7.4|^8.0",
         "payum/core": "^1.4.3",
