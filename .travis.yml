@@ -7,24 +7,16 @@ cache:
 sudo: false
 
 php:
-  - 5.6
-  - 7.0
-  - 7.1
-  - 7.2
-  - hhvm
-  - nightly
-
-matrix:
-  allow_failures:
-    - php: hhvm
+  - 7.4
+  - 8.0
 
 before_install:
     - composer self-update
 
 install:
-    - composer require "php-http/guzzle6-adapter:^1.0" --no-update
+    - composer require "php-http/guzzle6-adapter:^2.0" --no-update
     - composer --prefer-source install
 
 notifications:
   email:
-    - payumsupport@forma-pro.com
+    - i.rakovets@artox.com
